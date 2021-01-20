@@ -24,6 +24,7 @@ export class Adapter implements TestAdapter {
   private readonly autorunEmitter = new vscode.EventEmitter<void>();
   private readonly testExplorer: AngularKarmaTestExplorer;
   private readonly debugger: Debugger;
+  private loadInvocations: number = 0;
   private isTestProcessRunning: boolean = false;
   public loadedTests: TestSuiteInfo = {} as TestSuiteInfo;
 
@@ -95,7 +96,15 @@ export class Adapter implements TestAdapter {
     this.debugger = container.registerDebuggerDependencies();
   }
 
+  /** override */
   public async load(angularProject?: string): Promise<void> {
+    this.loadInvocations++;
+    if (this.loadInvocations > 1) {
+      await this._load(angularProject);
+    }
+  }
+
+  private async _load(angularProject?: string): Promise<void> {
     if (!this.isTestProcessRunning) {
       this.isTestProcessRunning = true;
       this.loadConfig();

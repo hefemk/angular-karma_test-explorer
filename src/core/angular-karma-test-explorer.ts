@@ -5,6 +5,7 @@ import { Logger } from "./shared/logger";
 import { TestSuiteInfo } from "vscode-test-adapter-api";
 import { TestExplorerConfiguration } from "../model/test-explorer-configuration";
 import { TestServer } from "../model/test-server";
+import * as vscode from "vscode";
 
 export class AngularKarmaTestExplorer {
   private loadedProjectRootPath: string = "";
@@ -25,6 +26,7 @@ export class AngularKarmaTestExplorer {
       await this.testServer.stopAsync();
     }
 
+    vscode.window.showInformationMessage(`Start test server.`);
     this.loadedProjectRootPath = await this.testServer.start(config);
 
     const testSuiteInfo = await this.karmaRunner.loadTests(this.loadedProjectRootPath);
